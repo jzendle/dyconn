@@ -15,7 +15,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
  *
  * @author zendle.joe
  */
-public class Config {
+public class SnmpPool {
 
    // recommended in docs to share single instance across threads
    private static org.snmp4j.Snmp theSnmp = null;

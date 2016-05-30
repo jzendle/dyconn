@@ -1,5 +1,6 @@
 package com.level3.hiper.dyconn.api;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -13,48 +14,59 @@ import javax.ws.rs.core.Response;
 @Path("api/json/dynamic/connection")
 public class DyConnApi {
 
-   @GET
-   @Path("/capacity")
-   @Produces(MediaType.APPLICATION_JSON)
-   public Input capacityCheck() {
+	@GET
+	@Path("/ping")
+	@Produces(MediaType.APPLICATION_JSON)
+	public ConnectionRequest capacityCheck() {
 
-      Input inp = new Input("fred");
-      inp.addDevice("dev1");
-      inp.addDevice("dev2");
+		ConnectionRequest ret = new ConnectionRequest();
+		ret.setBandwidth(1000000);
+		ret.setCos("Basic");
+		ConnectionEnd aEnd = new ConnectionEnd("circuitA");
+		aEnd.addDevice("dev1");
+		aEnd.addDevice("dev2");
+		ConnectionEnd zEnd = new ConnectionEnd("circuitB");
+		zEnd.addDevice("dev3");
+		zEnd.addDevice("dev4");
 
-      return inp;
+		ret.setaEnd(aEnd);
+		ret.setzEnd(zEnd);
 
-   }
-   @GET
-   @Path("/inventory")
-   @Produces(MediaType.APPLICATION_JSON)
-   public Response getCircuit(@QueryParam("circuitId") String circuitId) {
+		return ret;
 
-      Input inp = new Input(circuitId);
-      inp.addDevice("dev1");
-      inp.addDevice("dev2");
+	}
 
-      return Response.status(201).entity(inp).build();
+	@GET
+	@Path("/inventory")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getCircuit(@QueryParam("circuitId") String circuitId) {
 
-   }
+		ConnectionEnd inp = new ConnectionEnd(circuitId);
+		inp.addDevice("dev1");
+		inp.addDevice("dev2");
 
-   @POST
-   @Path("/inventory")
-   @Consumes(MediaType.APPLICATION_JSON)
-   public Response createConnection(Input input) {
+		return Response.status(201).entity(inp).build();
 
-      return Response.status(201).entity(input).build();
+	}
 
-   }
+	@POST
+	@Path("/metrics")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response createConnection(@Valid ConnectionRequest input) {
 
-   @DELETE
-   @Path("/inventory")
-   @Consumes(MediaType.APPLICATION_JSON)
-   public Response endConnection(Input input) {
+		return Response.status(201).entity(input).build();
 
-      return Response.status(201).entity(input).build();
+	}
 
-   }
+	@DELETE
+	@Path("/metrics")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response endConnection(@Valid DisconnectRequest input) {
 
+		return Response.status(201).entity(input).build();
+
+	}
 
 }

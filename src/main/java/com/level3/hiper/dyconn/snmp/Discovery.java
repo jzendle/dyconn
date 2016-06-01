@@ -44,13 +44,13 @@ import org.snmp4j.smi.UdpAddress;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
 
-
 /**
  *
  * @author jzendle
  */
 public class Discovery {
-  private static final String  IPADDRESS  = "127.0.0.1";
+  // private static final String  IPADDRESS  = "127.0.0.1";
+  private static final String  HOST_IP  = "127.0.0.1";
 
   private static final String  PORT    = "161";
 
@@ -74,7 +74,7 @@ public class Discovery {
     CommunityTarget comtarget = new CommunityTarget();
     comtarget.setCommunity(new OctetString(COMMUNITY));
     comtarget.setVersion(SNMPVERSION);
-    comtarget.setAddress(new UdpAddress(IPADDRESS + "/" + PORT));
+    comtarget.setAddress(new UdpAddress(HOST_IP + "/" + PORT));
     comtarget.setRetries(2);
     comtarget.setTimeout(1000);
 

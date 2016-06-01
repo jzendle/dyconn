@@ -1,13 +1,7 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.level3.hiper.dyconn;
 
 import com.sun.jersey.api.container.httpserver.HttpServerFactory;
 import com.sun.jersey.api.core.PackagesResourceConfig;
-import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.net.httpserver.HttpServer;
 
@@ -19,8 +13,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import javax.ws.rs.core.UriBuilder;
-import org.glassfish.jersey.moxy.json.MoxyJsonConfig;
-import org.glassfish.jersey.moxy.json.MoxyJsonFeature;
 import org.glassfish.jersey.server.ServerProperties;
 
 /**
@@ -40,17 +32,17 @@ public class Daemon {
 	}
 
 	private static HttpServer createHttpServer() throws IOException {
+      // jersey looks at this package to find annotation
 		final PackagesResourceConfig prc = new PackagesResourceConfig("com.level3.hiper.dyconn.api");
 		final Map<String, Object> prcProperties = prc.getProperties();
 		prcProperties.put(JSONConfiguration.FEATURE_POJO_MAPPING, true);
 		prcProperties.put(ServerProperties.BV_SEND_ERROR_IN_RESPONSE, true);
 		prcProperties.put(ServerProperties.BV_DISABLE_VALIDATE_ON_EXECUTABLE_OVERRIDE_CHECK, true);
+      // keeping following as documentation of how to register a filter - although was not satiisfied
+      // with behavior - fillter was getting called twice per method invocation
+//		prcProperties.put("com.sun.jersey.spi.container.ContainerResponseFilters", "com.level3.hiper.dyconn.api.TimingFilter");
+//      prcProperties.put("com.sun.jersey.spi.container.ContainerRequestFilters", "com.level3.hiper.dyconn.api.TimingFilter");
 		prc.setPropertiesAndFeatures(prcProperties);
-//		 prc.register(MoxyJsonFeature.class);
-//        register(new MoxyJsonConfig().setFormattedOutput(true)
-//                // Turn off BV otherwise the entities on server would be validated by MOXy as well.
-//                .property(MarshallerProperties.BEAN_VALIDATION_MODE, BeanValidationMode.NONE)
-//                .resolver());
 
 		return HttpServerFactory.create(getURI(), prc);
 	}

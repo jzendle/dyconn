@@ -10,17 +10,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ConnectionRequest extends DisconnectRequest {
 
 	
-	private String cos = "";
+	private Cos cos = Cos.Basic;
 	private long bandwidth = 0;
 
 	public ConnectionRequest() {
 	}
 
-	public String getCos() {
+	public Cos getCos() {
 		return cos;
 	}
 
-	public void setCos(String cos) {
+	public void setCos(Cos cos) {
 		this.cos = cos;
 	}
 
@@ -31,6 +31,16 @@ public class ConnectionRequest extends DisconnectRequest {
 	public void setBandwidth(long bandwidth) {
 		this.bandwidth = bandwidth;
 	}
+
+   @Override
+   public void validate() {
+      super.validate();
+
+      if ( cos == null  )
+         throw new ValidationException("invalid cos value: " + cos);
+      if ( bandwidth <= 0 )
+         throw new ValidationException("invalid bandwitdh value: " + bandwidth);
+   }
 	
 	
 

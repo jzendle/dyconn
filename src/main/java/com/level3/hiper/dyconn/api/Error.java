@@ -9,11 +9,10 @@ package com.level3.hiper.dyconn.api;
  *
  * @author jzendle
  */
-public class ErrorMessage {
-	String message = "";
-	String developerMessage = "";
-	int code = -1;
-	int status = 500;
+public class Error {
+	String message = "SUCCESS";
+	int code = 0;
+	String detail = "The operation was successful";
 
 	public String getMessage() {
 		return message;
@@ -21,14 +20,6 @@ public class ErrorMessage {
 
 	public void setMessage(String message) {
 		this.message = message;
-	}
-
-	public String getDeveloperMessage() {
-		return developerMessage;
-	}
-
-	public void setDeveloperMessage(String developerMessage) {
-		this.developerMessage = developerMessage;
 	}
 
 	public int getCode() {
@@ -39,11 +30,11 @@ public class ErrorMessage {
 		this.code = code;
 	}
 
-	public int getStatus() {
-		return status;
+	public String getDetail() {
+		return detail;
 	}
-	public void setStatus(int st) {
-		status = st;
+	public void setDetail(String st) {
+		detail = st;
 	}
 
 	

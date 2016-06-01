@@ -11,8 +11,8 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("api/json/dynamic/connection")
-public class DyConnApi {
+@Path("network/v1/dynamicConnection")
+public class Api {
 
 	@GET
 	@Path("/ping")
@@ -21,7 +21,7 @@ public class DyConnApi {
 
 		ConnectionRequest ret = new ConnectionRequest();
 		ret.setBandwidth(1000000);
-		ret.setCos("Basic");
+		ret.setCos(Cos.Basic);
 		ConnectionEnd aEnd = new ConnectionEnd("circuitA");
 		aEnd.addDevice("dev1");
 		aEnd.addDevice("dev2");
@@ -54,6 +54,9 @@ public class DyConnApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createConnection(@Valid ConnectionRequest input) {
+      input.validate();
+
+      input.setError(new Error());
 
 		return Response.status(201).entity(input).build();
 
@@ -64,7 +67,9 @@ public class DyConnApi {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response endConnection(@Valid DisconnectRequest input) {
+      input.validate();
 
+      input.setError(new Error());
 		return Response.status(201).entity(input).build();
 
 	}

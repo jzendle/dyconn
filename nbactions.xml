@@ -14,4 +14,12 @@
                 <exec.executable>java</exec.executable>
             </properties>
         </action>
+        <action>
+            <actionName>CUSTOM-assemble</actionName>
+            <displayName>assemble</displayName>
+            <goals>
+                <goal>clean</goal>
+                <goal>assembly:assembly</goal>
+            </goals>
+        </action>
     </actions>

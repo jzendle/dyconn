@@ -9,18 +9,25 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author jzendle
  */
 @XmlRootElement
-@Path("/")
 public class DisconnectRequest {
-	@NotNull
-	private ConnectionEnd aEnd;
+   
+   private Error error;
 		
-	@NotNull
+	private ConnectionEnd aEnd;
 	private ConnectionEnd zEnd;
+
 
 	public DisconnectRequest() {
 	}
 
-	@NotNull
+   public Error getError() {
+      return error;
+   }
+
+   public void setError(Error error) {
+      this.error = error;
+   }  
+
 	public ConnectionEnd getaEnd() {
 		return aEnd;
 	}
@@ -28,7 +35,6 @@ public class DisconnectRequest {
 		this.aEnd = aEnd;
 	}
 
-	@NotNull(message = "frfrfr")
 	public ConnectionEnd getzEnd() {
 		return zEnd;
 	}
@@ -36,5 +42,14 @@ public class DisconnectRequest {
 	public void setzEnd(ConnectionEnd zEnd) {
 		this.zEnd = zEnd;
 	}
-   
+
+   public void validate() {
+      if ( aEnd == null || zEnd == null) {
+         throw new ValidationException("both end points must be populated");
+      }
+      if ( aEnd .getDevices() ==  null || zEnd .getDevices() == null) {
+         throw new ValidationException("both end points must contain devices");
+      }
+   }
+ 
 }

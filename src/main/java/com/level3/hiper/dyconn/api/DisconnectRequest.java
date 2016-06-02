@@ -10,8 +10,6 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement
 public class DisconnectRequest {
-   
-   private Error error;
 		
 	private ConnectionEnd aEnd;
 	private ConnectionEnd zEnd;
@@ -19,14 +17,6 @@ public class DisconnectRequest {
 
 	public DisconnectRequest() {
 	}
-
-   public Error getError() {
-      return error;
-   }
-
-   public void setError(Error error) {
-      this.error = error;
-   }  
 
 	public ConnectionEnd getaEnd() {
 		return aEnd;

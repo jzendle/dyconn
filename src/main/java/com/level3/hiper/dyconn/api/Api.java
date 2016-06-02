@@ -1,5 +1,9 @@
 package com.level3.hiper.dyconn.api;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -17,22 +21,25 @@ public class Api {
 	@GET
 	@Path("/ping")
 	@Produces(MediaType.APPLICATION_JSON)
-	public ConnectionRequest capacityCheck() {
+	public Response ping() {
+      ResponseWrapper ret = new ResponseWrapper();
+      Instant start = Instant.now();
+		ConnectionRequest input = new ConnectionRequest();
+		input.setBandwidth(1000000);
+		input.setCos(Cos.Basic);
+		ConnectionEnd aEnd = new ConnectionEnd("23/VLXX/23344/TWCS");
+		aEnd.addDevice("AUSXTCK1W2001");
+		aEnd.addDevice("dal1-er2");
+		ConnectionEnd zEnd = new ConnectionEnd("43/KFFN/322768/TWCS");
+		zEnd.addDevice("AUSXTXKIW2002");
+		zEnd.addDevice("dal1-er1");
 
-		ConnectionRequest ret = new ConnectionRequest();
-		ret.setBandwidth(1000000);
-		ret.setCos(Cos.Basic);
-		ConnectionEnd aEnd = new ConnectionEnd("circuitA");
-		aEnd.addDevice("dev1");
-		aEnd.addDevice("dev2");
-		ConnectionEnd zEnd = new ConnectionEnd("circuitB");
-		zEnd.addDevice("dev3");
-		zEnd.addDevice("dev4");
+		input.setaEnd(aEnd);
+		input.setzEnd(zEnd);
 
-		ret.setaEnd(aEnd);
-		ret.setzEnd(zEnd);
+      ret.setRuntime(Duration.between(start ,Instant.now()).toNanos());
 
-		return ret;
+		return Response.status(201).entity(ret).build();
 
 	}
 
@@ -54,11 +61,12 @@ public class Api {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createConnection(@Valid ConnectionRequest input) {
+      Collection ret = new ArrayList();
+      ret.add(input);
+      ret.add(new Error());
       input.validate();
 
-      input.setError(new Error());
-
-		return Response.status(201).entity(input).build();
+		return Response.status(201).entity(ret).entity(new Error()).build();
 
 	}
 
@@ -69,8 +77,7 @@ public class Api {
 	public Response endConnection(@Valid DisconnectRequest input) {
       input.validate();
 
-      input.setError(new Error());
-		return Response.status(201).entity(input).build();
+		return Response.status(201).entity(input).entity(new Error()).build();
 
 	}
 

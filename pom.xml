@@ -80,15 +80,15 @@
             </configuration>
          </plugin>
          <plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.5.3</version>
-				<configuration>
-					<descriptors>
-						<descriptor>assembly/assembly.xml</descriptor>
-					</descriptors>
-					<tarLongFileMode>posix</tarLongFileMode>
-				</configuration>
-			</plugin>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>2.5.3</version>
+            <configuration>
+               <descriptors>
+                  <descriptor>assembly/assembly.xml</descriptor>
+               </descriptors>
+               <tarLongFileMode>posix</tarLongFileMode>
+            </configuration>
+         </plugin>
 
       </plugins>
    </build>
@@ -118,6 +118,11 @@
          <groupId>org.glassfish.jersey.ext</groupId>
          <artifactId>jersey-bean-validation</artifactId>
          <version>2.2</version>
+      </dependency>
+      <dependency>
+         <groupId>org.mapdb</groupId>
+         <artifactId>mapdb</artifactId>
+         <version>1.0.9</version>
       </dependency>
    </dependencies>
    <properties>

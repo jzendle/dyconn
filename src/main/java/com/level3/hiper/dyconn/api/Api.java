@@ -37,6 +37,8 @@ public class Api {
 		input.setaEnd(aEnd);
 		input.setzEnd(zEnd);
 
+      ret.setResponse(input);
+
       ret.setRuntime(Duration.between(start ,Instant.now()).toNanos());
 
 		return Response.status(201).entity(ret).build();
@@ -57,27 +59,34 @@ public class Api {
 	}
 
 	@POST
-	@Path("/metrics")
+	@Path("/collection")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createConnection(@Valid ConnectionRequest input) {
-      Collection ret = new ArrayList();
-      ret.add(input);
-      ret.add(new Error());
+      Instant start = Instant.now();
+      ResponseWrapper ret = new ResponseWrapper();
       input.validate();
 
-		return Response.status(201).entity(ret).entity(new Error()).build();
+      ret.setResponse(input);
+
+      ret.setRuntime(Duration.between(start ,Instant.now()).toNanos());
+		return Response.status(201).entity(ret).build();
 
 	}
 
 	@DELETE
-	@Path("/metrics")
+	@Path("/collection")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response endConnection(@Valid DisconnectRequest input) {
+      Instant start = Instant.now();
+      ResponseWrapper ret = new ResponseWrapper();
       input.validate();
 
-		return Response.status(201).entity(input).entity(new Error()).build();
+      ret.setResponse(input);
+      ret.setRuntime(Duration.between(start ,Instant.now()).toNanos());
+
+		return Response.status(201).entity(ret).build();
 
 	}
 

@@ -11,34 +11,24 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 public class DisconnectRequest {
 		
-	private ConnectionEnd aEnd;
-	private ConnectionEnd zEnd;
-
+	private Connection connection;
 
 	public DisconnectRequest() {
 	}
 
-	public ConnectionEnd getaEnd() {
-		return aEnd;
+	public Connection getConnection() {
+		return connection;
 	}
-	public void setaEnd(ConnectionEnd aEnd) {
-		this.aEnd = aEnd;
+	public void setConnection(Connection aEnd) {
+		this.connection = aEnd;
 	}
-
-	public ConnectionEnd getzEnd() {
-		return zEnd;
-	}
-
-	public void setzEnd(ConnectionEnd zEnd) {
-		this.zEnd = zEnd;
-	}
-
+   
    public void validate() {
-      if ( aEnd == null || zEnd == null) {
-         throw new ValidationException("both end points must be populated");
+      if ( connection == null ) {
+         throw new ValidationException("connection must be populated");
       }
-      if ( aEnd .getDevices() ==  null || zEnd .getDevices() == null) {
-         throw new ValidationException("both end points must contain devices");
+      if ( connection .getDevices() ==  null ) {
+         throw new ValidationException("connection must contain devices");
       }
    }
  

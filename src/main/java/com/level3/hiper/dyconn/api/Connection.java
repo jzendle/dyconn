@@ -1,23 +1,21 @@
 package com.level3.hiper.dyconn.api;
 
-import java.util.HashSet;
-import java.util.Set;
-import org.codehaus.jackson.annotate.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
  * @author jzendle
  */
-public class ConnectionEnd {
+public class Connection {
 
 	private String circuitId = "";
-   @JsonProperty
-	private Set<String> devices = new HashSet<>();
+	private List<Device> devices = new ArrayList<>();
 
-   public ConnectionEnd(String circuitId) {
+   public Connection(String circuitId) {
       this.circuitId = circuitId;
    } 
-   public ConnectionEnd() {
+   public Connection() {
    }
 
    public String getCircuitId() {
@@ -28,15 +26,15 @@ public class ConnectionEnd {
       this.circuitId = circuitId;
    }
 
-   public Set<String> getDevices() {
+   public List<Device> getDevices() {
       return devices;
    }
 
-   public void setDevices(Set<String> devices) {
+   public void setDevices(List<Device> devices) {
       this.devices = devices;
    }
 
-   public void addDevice(String device) {
+   public void addDevice(Device device) {
       this.devices.add(device);
    }
 

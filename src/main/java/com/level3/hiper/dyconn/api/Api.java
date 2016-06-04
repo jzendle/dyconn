@@ -27,15 +27,12 @@ public class Api {
 		ConnectionRequest input = new ConnectionRequest();
 		input.setBandwidth(1000000);
 		input.setCos(Cos.Basic);
-		ConnectionEnd aEnd = new ConnectionEnd("23/VLXX/23344/TWCS");
-		aEnd.addDevice("AUSXTCK1W2001");
-		aEnd.addDevice("dal1-er2");
-		ConnectionEnd zEnd = new ConnectionEnd("43/KFFN/322768/TWCS");
-		zEnd.addDevice("AUSXTXKIW2002");
-		zEnd.addDevice("dal1-er1");
+		Connection aEnd = new Connection("23/VLXX/23344/TWCS");
+		aEnd.addDevice(new Device("AUSXTCK1W2001","ae/0"));
+		aEnd.addDevice(new Device("AUSXTCK19K001","ae/1"));
+		aEnd.addDevice(new Device("AUSXTCK1C6001","gig0"));
 
-		input.setaEnd(aEnd);
-		input.setzEnd(zEnd);
+		input.setConnection(aEnd);
 
       ret.setResponse(input);
 
@@ -50,9 +47,9 @@ public class Api {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCircuit(@QueryParam("circuitId") String circuitId) {
 
-		ConnectionEnd inp = new ConnectionEnd(circuitId);
-		inp.addDevice("dev1");
-		inp.addDevice("dev2");
+		Connection inp = new Connection(circuitId);
+		inp.addDevice(new Device("dev1","inf1"));
+		inp.addDevice(new Device("dev2","inf2"));
 
 		return Response.status(201).entity(inp).build();
 

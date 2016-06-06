@@ -7,16 +7,17 @@ import java.util.List;
  *
  * @author jzendle
  */
-public class Connection {
+public class Connection implements IValidate {
 
 	private String circuitId = "";
 	private List<Device> devices = new ArrayList<>();
 
+
+   public Connection() {
+   }
    public Connection(String circuitId) {
       this.circuitId = circuitId;
    } 
-   public Connection() {
-   }
 
    public String getCircuitId() {
       return circuitId;
@@ -38,5 +39,13 @@ public class Connection {
       this.devices.add(device);
    }
 
+   @Override
+   public void validate() {
+      if ( circuitId == null || "".equals(circuitId)) throw new ValidationException("circuitId cannot be empty");
+
+      for (Device device : devices) {
+         device.validate();
+      }
+   }
    
 }

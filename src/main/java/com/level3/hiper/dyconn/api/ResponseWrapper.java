@@ -23,7 +23,8 @@ public class ResponseWrapper {
    String owner = "insupport@level3.com";
    long runtime = 0;
    Error error = new Error();
-   DisconnectRequest response;
+   // DisconnectRequest response;
+   Connection response;
 
    public String getIdentifier() {
       return identifier;
@@ -89,15 +90,13 @@ public class ResponseWrapper {
       this.error = error;
    }
 
-   public DisconnectRequest getResponse() {
+   public Connection getResponse() {
       return response;
    }
 
-   public void setResponse(DisconnectRequest request) {
-      this.response = request;
+   public void setResponse(Connection connection) {
+      this.response = connection;
    }
 
-   
-   
    
 }

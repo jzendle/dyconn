@@ -11,7 +11,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
  *
  * @author zendle.joe
  */
-public class Device {
+public class Device implements IValidate {
    String name = "";
    String inf = "";
 
@@ -37,6 +37,12 @@ public class Device {
 
    public void setInf(String inf) {
       this.inf = inf;
+   }
+
+   @Override
+   public void validate() throws ValidationException {
+      if ( name == null || "".equals(name)) throw new ValidationException("device name cannot be empty");
+      if ( inf == null || "".equals(inf)) throw new ValidationException("interface cannot be empty");
    }
    
 }

@@ -9,8 +9,8 @@ package com.level3.hiper.dyconn.api;
  *
  * @author zendle.joe
  */
-public enum Cos {
-   Basic,
-   Enhanced
+public interface IValidate {
+
+   public void validate() throws ValidationException;
    
 }

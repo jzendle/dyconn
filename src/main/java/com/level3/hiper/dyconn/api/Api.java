@@ -24,17 +24,19 @@ public class Api {
 	public Response ping() {
       ResponseWrapper ret = new ResponseWrapper();
       Instant start = Instant.now();
-		ConnectionRequest input = new ConnectionRequest();
-		input.setBandwidth(1000000);
-		input.setCos(Cos.Basic);
-		Connection aEnd = new Connection("23/VLXX/23344/TWCS");
-		aEnd.addDevice(new Device("AUSXTCK1W2001","ae/0"));
-		aEnd.addDevice(new Device("AUSXTCK19K001","ae/1"));
-		aEnd.addDevice(new Device("AUSXTCK1C6001","gig0"));
+		// ConnectionRequest input = new ConnectionRequest();
+		// input.setBandwidth(1000000);
+		// input.setCos(Cos.Basic);
+		ConnectionCos connection = new ConnectionCos("23/VLXX/23344/TWCS");
+		connection.addDevice(new Device("AUSXTCK1W2001","ae/0"));
+		connection.addDevice(new Device("AUSXTCK19K001","ae/1"));
+		connection.addDevice(new Device("AUSXTCK1C6001","gig0"));
+		connection.setBandwidth(1000000);
+		connection.setCos(1);
 
-		input.setConnection(aEnd);
+		// input.setConnection(connection);
 
-      ret.setResponse(input);
+      ret.setResponse(connection);
 
       ret.setRuntime(Duration.between(start ,Instant.now()).toNanos());
 
@@ -59,10 +61,10 @@ public class Api {
 	@Path("/collection")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response createConnection(@Valid ConnectionRequest input) {
+	public Response createConnection(@Valid ConnectionCos input) {
       Instant start = Instant.now();
-      ResponseWrapper ret = new ResponseWrapper();
       input.validate();
+      ResponseWrapper ret = new ResponseWrapper();
 
       ret.setResponse(input);
 
@@ -75,10 +77,10 @@ public class Api {
 	@Path("/collection")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response endConnection(@Valid DisconnectRequest input) {
+	public Response endConnection(@Valid Connection input) {
       Instant start = Instant.now();
-      ResponseWrapper ret = new ResponseWrapper();
       input.validate();
+      ResponseWrapper ret = new ResponseWrapper();
 
       ret.setResponse(input);
       ret.setRuntime(Duration.between(start ,Instant.now()).toNanos());

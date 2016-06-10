@@ -68,7 +68,7 @@ public class Repository {
 
    public static void main (String [] args) throws IOException {
       String cfgName = "/dyconn-toml.cfg";
-      com.level3.hiper.dyconn.api.config.Config.instance().init(cfgName);
+      com.level3.hiper.dyconn.api.config.Config.instance().initialize(cfgName);
       String devFile = com.level3.hiper.dyconn.api.config.Config.instance().getString("network.dev.deviceFile");
 
       Repository.instance().load(devFile);

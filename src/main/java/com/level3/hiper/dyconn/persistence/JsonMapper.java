@@ -12,7 +12,7 @@ import org.codehaus.jackson.map.ObjectMapper;
  *
  * @author zendle.joe
  */
-public class Util {
+public class JsonMapper {
    private static ObjectMapper mapper = new ObjectMapper();
    public static String toJson(Object obj) throws IOException {
       return mapper.writeValueAsString(obj);

@@ -35,7 +35,7 @@ public class Refresh extends Thread {
 
    public static void main (String [] args) throws IOException, InterruptedException {
       String cfgName = "/dyconn-toml.cfg";
-      Config.instance().init(cfgName);
+      Config.instance().initialize(cfgName);
       String devFile = Config.instance().getString("network.dev.deviceFile");
 
       Repository.instance().load(devFile);

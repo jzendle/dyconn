@@ -27,7 +27,7 @@ public class Config {
       return theRepo;
    }
 
-   public Config init(String fn) throws IOException {
+   public Config initialize(String fn) throws IOException {
       this.fn = fn;
       this.toml = JToml.parse(Config.class.getResourceAsStream(fn));
       return this;
@@ -35,6 +35,10 @@ public class Config {
 
    public String getString(String key) {
       return this.toml.getString(key);
+   }
+
+   public Long getLong(String key) {
+      return toml.getLong(key);
    }
    
 }

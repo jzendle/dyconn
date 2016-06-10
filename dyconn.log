@@ -1,0 +1,10 @@
+11:36:06.468 [main] INFO  o.a.q.j.PropertiesFileInitialContextFactory - No Provider URL specified.
+11:36:06.518 [main] INFO  org.apache.qpid.client.AMQConnection - Connection:amqp://admin:********@clientID/?brokerlist='tcp://den1-amqd1:5672'
+11:36:06.706 [main] INFO  o.a.q.c.protocol.AMQProtocolSession - Using ProtocolVersion for Session:0-10
+11:36:06.719 [main] INFO  o.a.q.c.h.ClientMethodDispatcherImpl - New Method Dispatcher:AMQProtocolSession[null]
+11:36:06.724 [main] INFO  org.apache.qpid.client.AMQConnection - Connecting with ProtocolHandler Version:0-10
+11:36:06.838 [IoReceiver - den1-amqd1/64.129.67.202:5672] INFO  o.a.q.c.s.DynamicSaslRegistrar - Additional SASL providers successfully registered.
+11:36:06.840 [IoReceiver - den1-amqd1/64.129.67.202:5672] INFO  o.a.q.c.s.CallbackHandlerRegistry - Callback handlers available for SASL mechanisms: [EXTERNAL, GSSAPI, CRAM-MD5-HASHED, CRAM-MD5, AMQPLAIN, PLAIN, ANONYMOUS]
+11:36:06.855 [main] INFO  org.apache.qpid.client.AMQConnection - Connected with ProtocolHandler Version:0-10
+11:36:06.877 [main] INFO  org.apache.qpid.client.AMQSession - Created session:org.apache.qpid.client.AMQSession_0_10@a1cdc6d
+11:36:06.986 [main] INFO  o.a.q.c.BasicMessageProducer_0_10 - MessageProducer org.apache.qpid.client.BasicMessageProducer_0_10@5f683daf using publish mode : ASYNC_PUBLISH_ALL

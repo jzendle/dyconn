@@ -5,7 +5,6 @@
  */
 package com.level3.hiper.dyconn.persistence;
 
-import java.io.File;
 import java.util.Date;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
@@ -19,9 +18,10 @@ import org.mapdb.DBMaker;
 public class MapDb {
 
    public static void main(String[] args) {
-      DB db = DBMaker.newFileDB(new File("c:\\temp\\test.db")).make();
+      DB db = DBMaker.fileDB("c:\\temp\\test.db").make();
       String name = "map";
-      ConcurrentMap<String,String> map = (db.exists(name) ? db.getHashMap(name) : db.createHashMap(name).make());
+      // ConcurrentMap<String,String> map = (db.exists(name) ? db.getHashMap(name) : db.createHashMap(name).make());
+      ConcurrentMap map = db.hashMap(name).createOrOpen();
 
       String akey = "key_" + new Date().toString();
       map.put(akey, "here");

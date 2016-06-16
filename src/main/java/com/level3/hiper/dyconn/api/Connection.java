@@ -1,16 +1,18 @@
 package com.level3.hiper.dyconn.api;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 /**
  *
  * @author jzendle
  */
-public class Connection implements IValidate {
+public class Connection implements IValidate,Serializable,Comparable<Connection> {
 
    private Integer bandwidth;
    private Integer cos;
@@ -73,5 +75,55 @@ public class Connection implements IValidate {
    public void setCos(Integer cos) {
       this.cos = cos;
    }
+
+   @Override
+   public String toString() {
+      return "Connection{" + " circuitId=" + circuitId + " devices=" + devices + " bandwidth=" + bandwidth + " cos=" + cos + " '}'";
+   }
+
+   @Override
+   public int compareTo(Connection o) {
+      return this.circuitId.compareTo(o.circuitId);
+   }
+
+   @Override
+   public int hashCode() {
+      int hash = 5;
+      hash = 29 * hash + Objects.hashCode(this.circuitId);
+      return hash;
+   }
+
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj) {
+         return true;
+      }
+      if (obj == null) {
+         return false;
+      }
+      if (getClass() != obj.getClass()) {
+         return false;
+      }
+      final Connection other = (Connection) obj;
+      if (!Objects.equals(this.circuitId, other.circuitId)) {
+         return false;
+      }
+      return true;
+   }
+   
+   public Boolean containsDevice(String name) {
+      boolean ret = false;
+      for (Device device : devices) {
+         if ( name.equals(device.getName())) {
+            ret = true;
+            break;
+         }
+      }
+
+      return ret;
+   }
+   
+
+
    
 }

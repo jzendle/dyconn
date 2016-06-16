@@ -5,13 +5,14 @@
  */
 package com.level3.hiper.dyconn.api;
 
+import java.io.Serializable;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  *
  * @author zendle.joe
  */
-public class Device implements IValidate {
+public class Device implements IValidate ,Serializable {
    String name = "";
    String inf = "";
 
@@ -43,6 +44,11 @@ public class Device implements IValidate {
    public void validate() throws ValidationException {
       if ( name == null || "".equals(name)) throw new ValidationException("device name cannot be empty");
       if ( inf == null || "".equals(inf)) throw new ValidationException("interface cannot be empty");
+   }
+
+   @Override
+   public String toString() {
+      return "Device{" + "name=" + name + ", inf=" + inf + '}';
    }
    
 }

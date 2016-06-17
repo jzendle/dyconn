@@ -109,5 +109,33 @@ public class StoreTest {
       assertTrue(ret);
 
    }
+   
+   @Test
+   public void deleteByDevice2() {
+      System.out.println("deleteByDevice2");
+
+      addDevices();
+      Boolean ret = store.deleteByDeviceName("dev2");
+
+      System.out.println("after deleting by device2");
+      store.dump();
+
+      assertTrue(ret);
+
+   }
+
+   @Test
+   public void deleteByCircuit() {
+      System.out.println("deleteByCircuit");
+
+      addDevices();
+      Boolean ret = store.deleteByCircuitId("circ1");
+
+      System.out.println("after deleting by circ1");
+      store.dump();
+
+      assertTrue(ret);
+
+   }
 
 }

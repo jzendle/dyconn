@@ -8,6 +8,8 @@ package com.level3.hiper.dyconn.api.config;
 import io.ous.jtoml.JToml;
 import io.ous.jtoml.Toml;
 import java.io.IOException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -15,6 +17,7 @@ import java.io.IOException;
  */
 public class Config {
 
+   private static final Logger log = LoggerFactory.getLogger(Config.class);
    private static Config theRepo = null;
 
    private Toml toml = null;
@@ -34,11 +37,19 @@ public class Config {
    }
 
    public String getString(String key) {
-      return this.toml.getString(key);
+      String value = this.toml.getString(key);
+      log.debug("key '{}': value '{}'", key, value);
+      return value;
    }
 
    public Long getLong(String key) {
-      return toml.getLong(key);
+      Long value = toml.getLong(key);
+      log.debug("key '{}': value '{}'", key, value);
+      return value;
    }
-   
+
+   public String env() {
+      return this.toml.getString("env");
+   }
+
 }

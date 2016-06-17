@@ -41,9 +41,10 @@ public class Broker {
 
    public void initialize() throws NamingException, JMSException {
 
-      connectionFactory = Config.instance().getString("queue." + Main.env() + ".connect.factory");
-      connectionString = Config.instance().getString("queue." + Main.env() + ".connect.string");
-      queueName = Config.instance().getString("queue." + Main.env() + ".name");
+      String env = Config.instance().env();
+      connectionFactory = Config.instance().getString("queue." + env + ".connect.factory");
+      connectionString = Config.instance().getString("queue." + env + ".connect.string");
+      queueName = Config.instance().getString("queue." + env + ".name");
 
       Properties props = new Properties();
       props.setProperty("java.naming.factory.initial", connectionFactory);

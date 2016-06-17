@@ -7,17 +7,22 @@ package com.level3.hiper.dyconn.persistence;
 
 import com.level3.hiper.dyconn.api.Connection;
 import com.level3.hiper.dyconn.api.Device;
+import com.level3.hiper.dyconn.api.config.Config;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
 import org.mapdb.BTreeKeySerializer;
 import org.mapdb.DB;
 import org.mapdb.Fun;
 import org.mapdb.DBMaker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -25,6 +30,7 @@ import org.mapdb.DBMaker;
  */
 public class ConnectionStore {
 
+   private static final Logger log = LoggerFactory.getLogger(ConnectionStore.class);
    private static final String BY_CIRCUIT = "byCircuit";
    private static final String BY_DEVICE = "byDevice";
    private static final String REPLAY = "replayMsg";
@@ -44,7 +50,9 @@ public class ConnectionStore {
    private DB db;
 
    public void init(String file) {
-      db = DBMaker.newFileDB(new File(file)).make();
+      
+      log.info("accessing db file: " + file);
+      db = DBMaker.newFileDB(new File(file)).closeOnJvmShutdown().make();
 
       byDeviceMultiMap = (db.exists(BY_DEVICE) ? db.getTreeSet(BY_DEVICE)
               : db.createTreeSet(BY_DEVICE).serializer(BTreeKeySerializer.TUPLE2).make());
@@ -112,18 +120,39 @@ public class ConnectionStore {
    }
 
    public Boolean deleteByDeviceName(String deviceName) {
-      Boolean ret = false;
 
-      
-      for (Connection tmp : Fun.filter(byDeviceMultiMap, deviceName)) {
-         Connection tt = byCircuitMap.remove(tmp.getCircuitId());
-         System.out.println("removed: " + tt);
-         System.out.println(byDeviceMultiMap.remove(Fun.t2(deviceName, tmp)));
+      // not a pretty delete - must find all instances 
+      Set<Connection> connections = new HashSet<>();
+
+      // we have to do a full scan because the device name is burried in list.
+      // If this is too slow an additional index can be maintained for quick lookup
+      for (Map.Entry<String, Connection> entry : byCircuitMap.entrySet()) {
+         String key = entry.getKey();
+         Connection value = entry.getValue();
+         if (value.containsDevice(deviceName)) {
+            connections.add(value);
+         }
+      }
+      int cnt = 0;
+      for (Connection connection : connections) {
+
+         Connection deleted = byCircuitMap.remove(connection.getCircuitId());
+         if (deleted != null) {
+            cnt++;
+            for (Device device : connection.getDevices()) {
+               if (byDeviceMultiMap.remove(Fun.t2(device.getName(), deleted))) {
+                  cnt++;
+               } else {
+                  log.warn("record not found in byDeviceMultiMap for device: {} connection: {}", device.getName(), deleted);
+               }
+            }
+         }
       }
 
       db.commit();
 
-      return true;
+      return cnt > 0 ? true : false;
+
    }
 
    public void clear() {
@@ -132,8 +161,10 @@ public class ConnectionStore {
       db.commit();
    }
 
-   public void close() {
-      db.close();
+   public synchronized void close() {
+      if (!db.isClosed()) {
+         db.close();
+      }
    }
 
    public void dump() {
@@ -143,7 +174,7 @@ public class ConnectionStore {
          Connection value = entry.getValue();
          System.out.println("key: " + key + " value: " + value);
       }
-      
+
       System.out.println("byDeviceMultimapMap dump: ");
       Iterator iter = byDeviceMultiMap.iterator();
       while (iter.hasNext()) {
@@ -151,6 +182,15 @@ public class ConnectionStore {
          System.out.println("key:" + tup.a + " value: " + tup.b);
       }
 
+   }
+
+   public void initialize() {
+      String key = "db." + Config.instance().env() + ".file";
+      String value = Config.instance().getString(key);
+      if (key == null) {
+         throw new IllegalArgumentException("no value for key: " + value);
+      }
+      this.init(value);
    }
 
 }

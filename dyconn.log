@@ -8,3 +8,5 @@
 11:36:06.855 [main] INFO  org.apache.qpid.client.AMQConnection - Connected with ProtocolHandler Version:0-10
 11:36:06.877 [main] INFO  org.apache.qpid.client.AMQSession - Created session:org.apache.qpid.client.AMQSession_0_10@a1cdc6d
 11:36:06.986 [main] INFO  o.a.q.c.BasicMessageProducer_0_10 - MessageProducer org.apache.qpid.client.BasicMessageProducer_0_10@5f683daf using publish mode : ASYNC_PUBLISH_ALL
+15:46:27.457 [main] INFO  c.l.h.d.persistence.ConnectionStore - accessing db file: C:\temp\test.db
+16:25:43.524 [main] INFO  c.l.h.d.persistence.ConnectionStore - accessing db file: C:\temp\test.db

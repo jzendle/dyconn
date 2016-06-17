@@ -5,6 +5,7 @@
  */
 package com.level3.hiper.dyconn.api;
 
+import java.util.UUID;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -15,13 +16,13 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class ResponseWrapper {
 
    
-   String identifier = "uuid";
+   String identifier = UUID.randomUUID().toString();
    String host = "localhost";
    String uri = "/tmp";
    String version = "1.0";
    String environment = "development";
    String owner = "insupport@level3.com";
-   long runtime = 0;
+   Double runtime = new Double(0.0);
    Error error = new Error();
    // DisconnectRequest response;
    Connection response;
@@ -74,11 +75,11 @@ public class ResponseWrapper {
       this.owner = owner;
    }
 
-   public long getRuntime() {
+   public Double getRuntime() {
       return runtime;
    }
 
-   public void setRuntime(long runtime) {
+   public void setRuntime(Double runtime) {
       this.runtime = runtime;
    }
 

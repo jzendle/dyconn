@@ -111,8 +111,6 @@ public class Api {
 			&& addConnection(input)
 			&& sendToBroker(input, Operation.START)) {
 		}
-		{
-		}
 
 		return buildResponse(input, start, err);
 

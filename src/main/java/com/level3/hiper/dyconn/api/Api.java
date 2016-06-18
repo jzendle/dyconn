@@ -1,5 +1,7 @@
 package com.level3.hiper.dyconn.api;
 
+import com.level3.hiper.dyconn.Main;
+import com.level3.hiper.dyconn.api.config.Config;
 import com.level3.hiper.dyconn.messaging.Broker;
 import com.level3.hiper.dyconn.persistence.ConnectionStore;
 import com.level3.hiper.dyconn.persistence.JsonMapper;
@@ -17,10 +19,13 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +41,9 @@ public class Api {
 
 	private final Error err = new Error();
 	private ConnectionStore store = ConnectionStore.instance();
+
+	@Context
+	UriInfo uriInfo;
 
 	@GET
 	@Path("/ping")
@@ -70,6 +78,7 @@ public class Api {
 		return buildResponse(ret, start, err);
 
 	}
+
 	@GET
 	@Path("/collection/device")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -102,7 +111,8 @@ public class Api {
 			&& addConnection(input)
 			&& sendToBroker(input, Operation.START)) {
 		}
-		{}
+		{
+		}
 
 		return buildResponse(input, start, err);
 
@@ -152,7 +162,10 @@ public class Api {
 	private Response buildResponse(Object input, long start, Error err) {
 		ResponseWrapper ret = new ResponseWrapper();
 		ret.setError(err);
+		ret.setUri(uriInfo.getAbsolutePath().toString());
+		ret.setHost(Main.host);
 		ret.setResponse(input);
+		ret.setEnvironment(Config.instance().env());
 		ret.setRuntime((System.currentTimeMillis() - start) / 1000.0);
 		return Response.status(err.getCode()).entity(ret).build();
 	}

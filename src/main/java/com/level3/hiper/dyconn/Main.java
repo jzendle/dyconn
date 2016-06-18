@@ -34,9 +34,11 @@ import org.slf4j.LoggerFactory;
  */
 public class Main {
 
-   private static final ExecutorService TASK_EXECUTOR = Executors.newCachedThreadPool();
+   //private static final ExecutorService TASK_EXECUTOR = Executors.newCachedThreadPool();
 
    private static Logger log = LoggerFactory.getLogger(Main.class);
+   
+   public static String host = getHostName();
 
    public static void main(String[] args) throws IOException, NamingException, JMSException {
       try {
@@ -66,7 +68,6 @@ public class Main {
 
          log.info("initializing persistence");
          ConnectionStore.instance().initialize();
-         String host = getHostName();
          Long port = getPort();
 
          log.info("Starting Embedded Jersey HTTPServer...");

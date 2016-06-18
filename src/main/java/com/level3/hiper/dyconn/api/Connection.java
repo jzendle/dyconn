@@ -3,127 +3,141 @@ package com.level3.hiper.dyconn.api;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  *
  * @author jzendle
  */
-public class Connection implements IValidate,Serializable,Comparable<Connection> {
+@JsonIgnoreProperties({"created"})
+public class Connection implements IValidate, Serializable, Comparable<Connection> {
 
-   private Integer bandwidth;
-   private Integer cos;
+	private Integer bandwidth;
+	private Integer cos;
 	private String circuitId = "";
 	private List<Device> devices = new ArrayList<>();
 
-   private static Set<Integer> validCos = new HashSet<>(Arrays.asList(new Integer(1), new Integer(3), new Integer(5)));
+	private static Set<Integer> validCos = new HashSet<>(Arrays.asList(1, 3, 5));
 
+	private Date created;
 
-   public Connection() {
-   }
+	public Connection() {
+	}
 
-   public Connection(String circuitId) {
-      this.circuitId = circuitId;
-   } 
-   
+	public Connection(String circuitId) {
+		this.circuitId = circuitId;
+	}
 
-   public String getCircuitId() {
-      return circuitId;
-   }
+	public Date getCreated() {
+		return created;
+	}
 
-   public void setCircuitId(String circuitId) {
-      this.circuitId = circuitId;
-   }
+	public void setCreated(Date created) {
+		this.created = created;
+	}
 
-   public List<Device> getDevices() {
-      return devices;
-   }
+	public String getCircuitId() {
+		return circuitId;
+	}
 
-   public void setDevices(List<Device> devices) {
-      this.devices = devices;
-   }
+	public void setCircuitId(String circuitId) {
+		this.circuitId = circuitId;
+	}
 
-   public void addDevice(Device device) {
-      this.devices.add(device);
-   }
+	public List<Device> getDevices() {
+		return devices;
+	}
 
-   @Override
-   public void validate() {
-      if ( circuitId == null || "".equals(circuitId)) throw new ValidationException("circuitId cannot be empty");
-      if ( !validCos.contains(cos)) throw new ValidationException("invalid value for cos: " + cos);
-      if ( bandwidth == null || bandwidth < 0 ) throw new ValidationException("invalid value for bandwidth: " + bandwidth);
-      for (Device device : devices) {
-         device.validate();
-      }
-   }
+	public void setDevices(List<Device> devices) {
+		this.devices = devices;
+	}
 
-   public Integer getBandwidth() {
-      return bandwidth;
-   }
+	public void addDevice(Device device) {
+		this.devices.add(device);
+	}
 
-   public void setBandwidth(Integer bandwidth) {
-      this.bandwidth = bandwidth;
-   }
+	@Override
+	public void validate() throws ValidationException {
+		if (circuitId == null || "".equals(circuitId)) {
+			throw new ValidationException("circuitId cannot be empty");
+		}
+		if (!validCos.contains(cos)) {
+			throw new ValidationException("invalid value for cos: " + cos);
+		}
+		if (bandwidth == null || bandwidth < 0) {
+			throw new ValidationException("invalid value for bandwidth: " + bandwidth);
+		}
+		for (Device device : devices) {
+			device.validate();
+		}
+	}
 
-   public Integer getCos() {
-      return cos;
-   }
+	public Integer getBandwidth() {
+		return bandwidth;
+	}
 
-   public void setCos(Integer cos) {
-      this.cos = cos;
-   }
+	public void setBandwidth(Integer bandwidth) {
+		this.bandwidth = bandwidth;
+	}
 
-   @Override
-   public String toString() {
-      return "Connection{" + " circuitId=" + circuitId + " devices=" + devices + " bandwidth=" + bandwidth + " cos=" + cos + " '}'";
-   }
+	public Integer getCos() {
+		return cos;
+	}
 
-   @Override
-   public int compareTo(Connection o) {
-      return this.circuitId.compareTo(o.circuitId);
-   }
+	public void setCos(Integer cos) {
+		this.cos = cos;
+	}
 
-   @Override
-   public int hashCode() {
-      int hash = 5;
-      hash = 29 * hash + Objects.hashCode(this.circuitId);
-      return hash;
-   }
+	@Override
+	public String toString() {
+		return "Connection{" + " circuitId=" + circuitId + " devices=" + devices + " bandwidth=" + bandwidth + " cos=" + cos + " '}'";
+	}
 
-   @Override
-   public boolean equals(Object obj) {
-      if (this == obj) {
-         return true;
-      }
-      if (obj == null) {
-         return false;
-      }
-      if (getClass() != obj.getClass()) {
-         return false;
-      }
-      final Connection other = (Connection) obj;
-      if (!Objects.equals(this.circuitId, other.circuitId)) {
-         return false;
-      }
-      return true;
-   }
-   
-   public Boolean containsDevice(String name) {
-      boolean ret = false;
-      for (Device device : devices) {
-         if ( name.equals(device.getName())) {
-            ret = true;
-            break;
-         }
-      }
+	@Override
+	public int compareTo(Connection o) {
+		return this.circuitId.compareTo(o.circuitId);
+	}
 
-      return ret;
-   }
-   
+	@Override
+	public int hashCode() {
+		int hash = 5;
+		hash = 29 * hash + Objects.hashCode(this.circuitId);
+		return hash;
+	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final Connection other = (Connection) obj;
+		if (!Objects.equals(this.circuitId, other.circuitId)) {
+			return false;
+		}
+		return true;
+	}
 
-   
+	public Boolean containsDevice(String name) {
+		boolean ret = false;
+		for (Device device : devices) {
+			if (name.equals(device.getName())) {
+				ret = true;
+				break;
+			}
+		}
+
+		return ret;
+	}
+
 }

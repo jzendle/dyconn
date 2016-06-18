@@ -25,7 +25,7 @@ public class ResponseWrapper {
    Double runtime = new Double(0.0);
    Error error = new Error();
    // DisconnectRequest response;
-   Connection response;
+   Object response;
 
    public String getIdentifier() {
       return identifier;
@@ -91,11 +91,11 @@ public class ResponseWrapper {
       this.error = error;
    }
 
-   public Connection getResponse() {
+   public Object getResponse() {
       return response;
    }
 
-   public void setResponse(Connection connection) {
+   public void setResponse(Object connection) {
       this.response = connection;
    }
 

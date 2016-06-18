@@ -9,10 +9,16 @@ package com.level3.hiper.dyconn.api;
  *
  * @author jzendle
  */
+
 public class Error {
-	String message = "SUCCESS";
-	int code = 0;
-	String detail = "The operation was successful";
+
+public final static String SUCCESS = "SUCCESS";
+public final static String FAILURE = "FAILURE";
+
+
+	private String message = SUCCESS;
+	private int code = 200; // standard success code
+	private String detail = "The operation was successful";
 
 	public String getMessage() {
 		return message;

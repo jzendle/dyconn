@@ -50,12 +50,10 @@ public class Api {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response ping() {
 
+		log.info(uriInfo.getPath());
 		long start = System.currentTimeMillis();
 
 		ResponseWrapper ret = new ResponseWrapper();
-		// ConnectionRequest input = new ConnectionRequest();
-		// input.setBandwidth(1000000);
-		// input.setCos(Cos.Basic);
 		Connection connection = new Connection("23/VLXX/23344/TWCS");
 		connection.addDevice(new Device("AUSXTCK1W2001", "ae/0"));
 		connection.addDevice(new Device("AUSXTCK19K001", "ae/1"));
@@ -73,7 +71,13 @@ public class Api {
 	public Response getConnectionByCircuitId(@QueryParam("id") String circuitId) {
 		long start = System.currentTimeMillis();
 
-		Connection ret = store.getByCircuitId(circuitId);
+		log.info(uriInfo.getPath() + " id: " + circuitId);
+
+		Connection ret = null;
+
+		if (validate(circuitId) && 
+			(ret = store.getByCircuitId(circuitId)) != null) {
+		}
 
 		return buildResponse(ret, start, err);
 
@@ -84,8 +88,12 @@ public class Api {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getConnectionByDeviceName(@QueryParam("id") String device) {
 		long start = System.currentTimeMillis();
+		log.info(uriInfo.getPath() + " id: " + device);
+		List<Connection> ret = null;
 
-		List<Connection> ret = store.getByDeviceName(device);
+		if (validate(device) && 
+			(ret = store.getByDeviceName(device)) != null) {
+		}
 
 		return buildResponse(ret, start, err);
 
@@ -106,10 +114,14 @@ public class Api {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createConnection(@Valid Connection input) {
 		long start = System.currentTimeMillis();
+		log.info(uriInfo.getPath() + " input: " + input);
 
-		if (validate(input)
+		if (validate(input) 
+			&& okToAdd(input)
+			&& sendToBroker(input, Operation.START)
 			&& addConnection(input)
-			&& sendToBroker(input, Operation.START)) {
+			) 
+		{
 		}
 
 		return buildResponse(input, start, err);
@@ -123,13 +135,17 @@ public class Api {
 	public Response endConnection(@Valid Connection input) {
 
 		long start = System.currentTimeMillis();
+		log.info(uriInfo.getPath() + " input: " + input);
 
 		String circuitID = input.getCircuitId();
 		// check if we circuit is new
 
 		if (validate(input)
+			&& okToDelete(input)
+			&& sendToBroker(input, Operation.STOP)
 			&& deleteConnection(circuitID)
-			&& sendToBroker(input, Operation.STOP)) {
+			) 
+		{
 		}
 
 		return buildResponse(input, start, err);
@@ -181,6 +197,20 @@ public class Api {
 
 	}
 
+	boolean validate(String input) {
+
+		if (input != null) {
+			return true;
+
+		} else {
+			err.setCode(412); // precondition not met;
+			err.setMessage(Error.FAILURE);
+			err.setDetail("null input param not allowed");
+			return false;
+		}
+
+	}
+
 	boolean deleteConnection(String circuitId) {
 		boolean ret = true;
 		if (!ConnectionStore.instance().deleteByCircuitId(circuitId)) {
@@ -196,10 +226,36 @@ public class Api {
 	boolean addConnection(Connection input) {
 		boolean ret = true;
 
-		if (!ConnectionStore.instance().addConnection(input)) {
+		// TODO limit error handling to only backend error conditions
+		// since there is a routine to handle precondition
+		if (!store.addConnection(input)) {
 			err.setCode(409); // conflict
 			err.setMessage("connection already being monitored");
 			err.setDetail("connection " + input.getCircuitId() + " is currently being monitored");
+			ret = false;
+		}
+		return ret;
+	}
+	boolean okToAdd(Connection input) {
+
+		boolean ret = true;
+		String circuitId = input.getCircuitId();
+		if (store.getByCircuitId(circuitId) != null) {
+			err.setCode(409); // conflict
+			err.setMessage("connection already being monitored");
+			err.setDetail("connection " + circuitId + " is currently being monitored");
+			ret = false;
+		}
+		return ret;
+	}
+	boolean okToDelete(Connection input) {
+
+		boolean ret = true;
+		String circuitId = input.getCircuitId();
+		if (store.getByCircuitId(circuitId) == null) {
+				err.setCode(404); // not found
+			err.setMessage(Error.FAILURE);
+			err.setDetail("dynamic connection is not currently being monitored:  " + circuitId);
 			ret = false;
 		}
 		return ret;

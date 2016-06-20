@@ -1,7 +1,7 @@
 package com.level3.hiper.dyconn.api;
 
 import com.level3.hiper.dyconn.Main;
-import com.level3.hiper.dyconn.api.config.Config;
+import com.level3.hiper.dyconn.config.Config;
 import com.level3.hiper.dyconn.messaging.Broker;
 import com.level3.hiper.dyconn.persistence.ConnectionStore;
 import com.level3.hiper.dyconn.persistence.JsonMapper;

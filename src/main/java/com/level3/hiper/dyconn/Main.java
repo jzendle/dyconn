@@ -1,6 +1,6 @@
 package com.level3.hiper.dyconn;
 
-import com.level3.hiper.dyconn.api.config.Config;
+import com.level3.hiper.dyconn.config.Config;
 import com.level3.hiper.dyconn.messaging.Broker;
 import com.level3.hiper.dyconn.persistence.ConnectionStore;
 import com.sun.jersey.api.container.httpserver.HttpServerFactory;

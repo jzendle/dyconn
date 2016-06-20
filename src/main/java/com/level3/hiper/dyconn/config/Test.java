@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.level3.hiper.dyconn.api.config;
+package com.level3.hiper.dyconn.config;
 
 import io.ous.jtoml.JToml;
 import io.ous.jtoml.Toml;

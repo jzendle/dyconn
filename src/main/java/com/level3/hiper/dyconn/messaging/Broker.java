@@ -5,8 +5,7 @@
  */
 package com.level3.hiper.dyconn.messaging;
 
-import com.level3.hiper.dyconn.Main;
-import com.level3.hiper.dyconn.api.config.Config;
+import com.level3.hiper.dyconn.config.Config;
 import java.util.Properties;
 import javax.jms.ConnectionFactory;
 import javax.jms.Connection;

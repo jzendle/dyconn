@@ -70,7 +70,7 @@
                   <manifest>
                      <addClasspath>true</addClasspath>
                      <classpathPrefix>lib/</classpathPrefix>
-                     <mainClass>com.level3.hiper.dyconn.Daemon</mainClass>
+                     <mainClass>com.level3.hiper.dyconn.Main</mainClass>
                   </manifest>
                   <manifestEntries>
                      <Class-Path>.</Class-Path>

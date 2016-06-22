@@ -131,7 +131,7 @@ public class Connection implements IValidate, Serializable, Comparable<Connectio
 	public Boolean containsDevice(String name) {
 		boolean ret = false;
 		for (Device device : devices) {
-			if (name.equals(device.getName())) {
+			if (name.equals(device.getTid()) ||name.equals(device.getHostname()) ) {
 				ret = true;
 				break;
 			}

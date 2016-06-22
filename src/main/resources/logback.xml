@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration scan="true" scanPeriod="30 seconds">
+<configuration scan="true" debug="true" scanPeriod="30 seconds">
    <jmxConfigurator></jmxConfigurator>
  
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-    <layout class="ch.qos.logback.classic.PatternLayout">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
       <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
-    </layout>
+    </encoder>
   </appender>
-   
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+    <file>/var/log/dyconn-fe.log</file>
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</Pattern>
+    </encoder>
+ </appender>
   <logger name="com.level3" level="DEBUG"/>
   <logger name="org.apache.qpid" level="INFO"/>
    
  
   <root level="debug">
-    <appender-ref ref="STDOUT" />
+    <appender-ref ref="FILE" />
   </root>
 </configuration>

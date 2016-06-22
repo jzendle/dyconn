@@ -10,6 +10,7 @@ import com.level3.hiper.dyconn.api.Device;
 import com.level3.hiper.dyconn.config.Config;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -72,7 +73,7 @@ public class ConnectionStore {
       }
 
       for (Device device : conn.getDevices()) {
-         byDeviceMultiMap.add(Fun.t2(device.getName(), conn));
+         byDeviceMultiMap.add(Fun.t2(device.getPreferredName(), conn));
       }
       byCircuitMap.put(circuitId, conn);
 
@@ -86,9 +87,9 @@ public class ConnectionStore {
       return byCircuitMap.get(circuitId);
    }
 
-   public List<Connection> getByDeviceName(String deviceName) {
-      List<Connection> ret = new ArrayList<>();
-      for (Connection conn : Fun.filter(byDeviceMultiMap, deviceName)) {
+   public Collection<Connection> getByDeviceName(String preferredDeviceName) {
+      Collection<Connection> ret = new ArrayList<>();
+      for (Connection conn : Fun.filter(byDeviceMultiMap, preferredDeviceName)) {
          ret.add(conn);
       }
       return ret;
@@ -105,7 +106,7 @@ public class ConnectionStore {
       }
       for (Device dev : conn.getDevices()) {
          // find all matching devices by name 
-         String deviceName = dev.getName();
+         String deviceName = dev.getPreferredName();
          for (Connection candidate : Fun.filter(byDeviceMultiMap, deviceName)) {
             // remove them if circuitId matches
             if (candidate.getCircuitId().equals(circuitId)) {
@@ -140,10 +141,10 @@ public class ConnectionStore {
          if (deleted != null) {
             cnt++;
             for (Device device : connection.getDevices()) {
-               if (byDeviceMultiMap.remove(Fun.t2(device.getName(), deleted))) {
+               if (byDeviceMultiMap.remove(Fun.t2(device.getPreferredName(), deleted))) {
                   cnt++;
                } else {
-                  log.warn("record not found in byDeviceMultiMap for device: {} connection: {}", device.getName(), deleted);
+                  log.warn("record not found in byDeviceMultiMap for device: {} connection: {}", device, deleted);
                }
             }
          }

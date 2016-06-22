@@ -62,7 +62,7 @@ public class MapDb {
             String akey = "circuit_" + j;
 
             Connection conn = new Connection(akey);
-            conn.addDevice(new Device("name", "inf"));
+            conn.addDevice(new Device("name", "","inf"));
             conn.setBandwidth(45);
             conn.setCos(3);
             map.put(akey, conn);
@@ -89,7 +89,7 @@ public class MapDb {
          for (int j = 10; j < 20; j++) {
 
             Connection conn = new Connection("" + j);
-            conn.addDevice(new Device("name", "inf"));
+            conn.addDevice(new Device("name", "host", "inf"));
             conn.setBandwidth(45);
             conn.setCos(3);
             multiMap.add(Fun.t2(akey, conn));

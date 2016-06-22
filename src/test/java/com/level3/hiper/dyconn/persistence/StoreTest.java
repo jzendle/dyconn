@@ -57,16 +57,16 @@ public class StoreTest {
    public void addDevices() {
       System.out.println("addDevices");
       Connection conn1 = new Connection("circ1");
-      conn1.addDevice(new Device("dev1", "inf1"));
-      conn1.addDevice(new Device("dev2", "inf2"));
+      conn1.addDevice(new Device("dev1", "ash1-er1","inf1"));
+      conn1.addDevice(new Device("dev2", "","inf2"));
 
       Connection conn2 = new Connection("circ2");
-      conn2.addDevice(new Device("dev1", "inf1"));
-      conn2.addDevice(new Device("dev3", "inf3"));
+      conn2.addDevice(new Device("dev1", "ash1-er1","inf1"));
+      conn2.addDevice(new Device("dev3", "","inf3"));
 
       Connection conn3 = new Connection("circ3");
-      conn3.addDevice(new Device("dev1", "inf1"));
-      conn3.addDevice(new Device("dev4", "inf4"));
+      conn3.addDevice(new Device("dev1", "ash1-er1","inf1"));
+      conn3.addDevice(new Device("dev4", "","inf4"));
 
       assertTrue(store.addConnection(conn1));
       assertTrue(store.addConnection(conn2));
@@ -89,8 +89,8 @@ public class StoreTest {
       addDevices();
 
       Connection conn1 = new Connection("circ1");
-      conn1.addDevice(new Device("dev1", "inf1"));
-      conn1.addDevice(new Device("dev2", "inf2"));
+      conn1.addDevice(new Device("dev1", "ash1-er1","inf1"));
+      conn1.addDevice(new Device("dev2", "","inf2"));
 
       assertFalse(store.addConnection(conn1));
 

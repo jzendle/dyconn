@@ -42,26 +42,25 @@ public class Api {
 	private final Error err = new Error();
 	private ConnectionStore store = ConnectionStore.instance();
 
-	@Context
-	UriInfo uriInfo;
+	@Context UriInfo uriInfo;
+   
 
 	@GET
 	@Path("/ping")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response ping() {
 
-		log.info(uriInfo.getPath());
+		log.info("GET:" + uriInfo.getPath());
 		long start = System.currentTimeMillis();
 
-		ResponseWrapper ret = new ResponseWrapper();
 		Connection connection = new Connection("23/VLXX/23344/TWCS");
-		connection.addDevice(new Device("AUSXTCK1W2001", "ae/0"));
-		connection.addDevice(new Device("AUSXTCK19K001", "ae/1"));
-		connection.addDevice(new Device("AUSXTCK1C6001", "gig0"));
+		connection.addDevice(new Device("AUSXTCK1W2001", "ash1-er1","ae/0"));
+		connection.addDevice(new Device("AUSXTCK19K001", "","ae/1"));
+		connection.addDevice(new Device("AUSXTCK1C6001", "","gig0"));
 		connection.setBandwidth(1000000);
 		connection.setCos(1);
 
-		return buildResponse(ret, start, err);
+		return buildResponse(connection, start, err);
 
 	}
 
@@ -71,7 +70,7 @@ public class Api {
 	public Response getConnectionByCircuitId(@QueryParam("id") String circuitId) {
 		long start = System.currentTimeMillis();
 
-		log.info(uriInfo.getPath() + " id: " + circuitId);
+		log.info("GET:"+uriInfo.getPath() + " id: " + circuitId);
 
 		Connection ret = null;
 
@@ -86,13 +85,13 @@ public class Api {
 	@GET
 	@Path("/collection/device")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getConnectionByDeviceName(@QueryParam("id") String device) {
+	public Response getConnectionByDeviceName(@QueryParam("id") String preferredName) {
 		long start = System.currentTimeMillis();
-		log.info(uriInfo.getPath() + " id: " + device);
-		List<Connection> ret = null;
+		log.info("GET:"+uriInfo.getPath() + " id: " + preferredName);
+		Collection<Connection> ret = null;
 
-		if (validate(device) && 
-			(ret = store.getByDeviceName(device)) != null) {
+		if (validate(preferredName) && 
+			(ret = store.getByDeviceName(preferredName)) != null) {
 		}
 
 		return buildResponse(ret, start, err);
@@ -114,7 +113,7 @@ public class Api {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response createConnection(@Valid Connection input) {
 		long start = System.currentTimeMillis();
-		log.info(uriInfo.getPath() + " input: " + input);
+		log.info("POST:"+uriInfo.getPath() + " input: " + input);
 
 		if (validate(input) 
 			&& okToAdd(input)
@@ -135,7 +134,7 @@ public class Api {
 	public Response endConnection(@Valid Connection input) {
 
 		long start = System.currentTimeMillis();
-		log.info(uriInfo.getPath() + " input: " + input);
+		log.info("DELETE:"+uriInfo.getPath() + " input: " + input);
 
 		String circuitID = input.getCircuitId();
 		// check if we circuit is new

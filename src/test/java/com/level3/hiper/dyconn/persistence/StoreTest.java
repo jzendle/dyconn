@@ -28,7 +28,7 @@ public class StoreTest {
    @BeforeClass
    public static void setUpClass() {
       System.out.println("setUpClass");
-      store.init("C:\\temp\\test.db");
+      store.init("storetest.db");
       store.clear();
 
    }

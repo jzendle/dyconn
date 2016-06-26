@@ -23,12 +23,12 @@ import static org.junit.Assert.*;
  *
  * @author zendle.joe
  */
-public class XMLParserTest {
+public class XMLParserBadTest {
 
 	static XMLParser test;
 	InputStream in;
 
-	public XMLParserTest() {
+	public XMLParserBadTest() {
 	}
 
 	@BeforeClass
@@ -42,7 +42,7 @@ public class XMLParserTest {
 	@Before
 	public void setUp() {
 
-		in = this.getClass().getResourceAsStream("/nso_payload_example.xml");
+		in = this.getClass().getResourceAsStream("/nso_payload_bad_1.xml");
 
 	}
 
@@ -52,7 +52,7 @@ public class XMLParserTest {
 			try {
 				in.close();
 			} catch (IOException ex) {
-				Logger.getLogger(XMLParserTest.class.getName()).log(Level.SEVERE, null, ex);
+				Logger.getLogger(XMLParserBadTest.class.getName()).log(Level.SEVERE, null, ex);
 			}
 		}
 	}
@@ -79,9 +79,15 @@ public class XMLParserTest {
 		assertEquals(2, devs.size());
 		System.out.println("edge: " + devs.toString());
 
+		devs = null;
+		try {
 		devs = test.getPeDevices();
-		assertEquals(2, devs.size());
-
-		System.out.println("pe: " + devs.toString());
+		}
+		catch (Exception exc) {
+			System.out.println("invalid input: " + exc.getMessage());
+			
+			;
+		}
+		assertNull(devs);
 	}
 }

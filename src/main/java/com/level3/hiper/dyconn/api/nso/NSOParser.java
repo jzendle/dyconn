@@ -5,7 +5,9 @@
  */
 package com.level3.hiper.dyconn.api.nso;
 
-import com.level3.hiper.dyconn.api.Device;
+import com.level3.hiper.dyconn.model.Device;
+import com.level3.hiper.dyconn.api.IValidate;
+import com.level3.hiper.dyconn.api.ValidationException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -30,9 +32,10 @@ import org.xml.sax.SAXException;
  *
  * @author zendle.joe
  */
-public class XMLParser {
+public class NSOParser implements IValidate {
 
-	private Document doc;
+	private Document doc = null;
+	private String xml = null;
 	private static final String NID_DEVICES = "/dycon/nid-metro/devices";
 	private static final String PE_DEVICES = "/dycon/pe/devices";
 	private static final String DEVICE = "device";
@@ -40,31 +43,20 @@ public class XMLParser {
 	private static final String NID_SI = "service-instance";
 	private static final String PE_INTERFACES = "interfaces";
 
-	private static final Logger log = LoggerFactory.getLogger(XMLParser.class);
+	private static final Logger log = LoggerFactory.getLogger(NSOParser.class);
 
-	public XMLParser(String xml) throws SAXException, IOException {
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = null;
-
-		try {
-			builder = factory.newDocumentBuilder();
-		} catch (ParserConfigurationException ex) {
-			log.error(ex.getMessage(), ex);
-		}
-		ByteArrayInputStream input = null;
-		try {
-			input = new ByteArrayInputStream(
-				xml.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException ex) {
-			log.error(ex.getMessage(), ex);
-			throw ex;
-		}
-
-		doc = builder.parse(input); // throws
+	private Collection<Device> edgeDevices = null;
+	private Collection<Device> peDevices = null;
+	
+	
+	public NSOParser(String xml) {
+		this.xml = xml;
 	}
 
 	public Collection<Device> getEdgeDevices() throws IllegalArgumentException {
-		Collection<Device> ret = new HashSet<>();
+		if (edgeDevices != null) return edgeDevices;
+		
+		edgeDevices = new HashSet<>();
 
 		NodeList nodeList = getNodeListForXPath(doc, NID_DEVICES);
 
@@ -82,15 +74,18 @@ public class XMLParser {
 				// TODO will it always be this??
 				device.setInf(inf + ".ServiceInstance." + si);
 			}
-			ret.add(device);
+			edgeDevices.add(device);
 
 		}
 
-		return ret;
+		return edgeDevices;
 	}
 
 	public Collection<Device> getPeDevices() {
-		Collection<Device> ret = new HashSet<>();
+		
+		if (peDevices != null) return peDevices;
+		
+		peDevices = new HashSet<>();
 
 		NodeList nodeList = getNodeListForXPath(doc, PE_DEVICES);
 
@@ -119,11 +114,11 @@ public class XMLParser {
 				device.setHostname(hostname);
 				device.setInf(inf);
 			}
-			ret.add(device);
+			peDevices.add(device);
 
 		}
 
-		return ret;
+		return peDevices;
 	}
 
 	private String getCurrentTag(Element node, String tag) {
@@ -151,6 +146,32 @@ public class XMLParser {
 			throw new IllegalArgumentException(NID_DEVICES, ex);
 		}
 		return nodeList;
+	}
+
+	@Override
+	public void validate() throws ValidationException {
+
+		// parse
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder = null;
+
+		try {
+			builder = factory.newDocumentBuilder();
+
+			ByteArrayInputStream input = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+			doc = builder.parse(input);
+
+		} catch (Exception ex) {
+			log.error(ex.getMessage(), ex);
+			throw new ValidationException("validating NSO xml: " + ex.getMessage());
+		}
+		
+		// business rules
+		
+		if ( getEdgeDevices().size() != 2 &&  getPeDevices().size() != 2    ) {
+			throw new ValidationException("either 2 edge or pe devices must exist in request");
+
+		}
 	}
 
 }

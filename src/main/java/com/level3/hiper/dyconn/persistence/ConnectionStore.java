@@ -5,8 +5,8 @@
  */
 package com.level3.hiper.dyconn.persistence;
 
-import com.level3.hiper.dyconn.api.Connection;
-import com.level3.hiper.dyconn.api.Device;
+import com.level3.hiper.dyconn.model.Connection;
+import com.level3.hiper.dyconn.model.Device;
 import com.level3.hiper.dyconn.config.Config;
 import java.io.File;
 import java.util.ArrayList;

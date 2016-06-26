@@ -5,8 +5,8 @@
  */
 package com.level3.hiper.dyconn.persistence;
 
-import com.level3.hiper.dyconn.api.Connection;
-import com.level3.hiper.dyconn.api.Device;
+import com.level3.hiper.dyconn.model.Connection;
+import com.level3.hiper.dyconn.model.Device;
 import java.io.File;
 import java.util.Date;
 import java.util.NavigableSet;

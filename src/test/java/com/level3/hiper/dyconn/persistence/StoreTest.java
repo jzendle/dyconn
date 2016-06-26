@@ -5,8 +5,9 @@
  */
 package com.level3.hiper.dyconn.persistence;
 
-import com.level3.hiper.dyconn.api.Connection;
-import com.level3.hiper.dyconn.api.Device;
+import com.level3.hiper.dyconn.api.Request;
+import com.level3.hiper.dyconn.model.Connection;
+import com.level3.hiper.dyconn.model.Device;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

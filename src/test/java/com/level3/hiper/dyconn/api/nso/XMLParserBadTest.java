@@ -5,7 +5,7 @@
  */
 package com.level3.hiper.dyconn.api.nso;
 
-import com.level3.hiper.dyconn.api.Device;
+import com.level3.hiper.dyconn.model.Device;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
  */
 public class XMLParserBadTest {
 
-	static XMLParser test;
+	static NSOParser test;
 	InputStream in;
 
 	public XMLParserBadTest() {
@@ -67,7 +67,8 @@ public class XMLParserBadTest {
 
 		System.out.println(str);
 		try {
-			test = new XMLParser(str);
+			test = new NSOParser(str);
+			test.validate();
 		} catch (Exception ex) {
 			System.out.println("here1 " + ex.getMessage());
 			ex.printStackTrace();

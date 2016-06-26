@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.level3.hiper.dyconn.api;
+package com.level3.hiper.dyconn.model;
 
+import com.level3.hiper.dyconn.api.IValidate;
+import com.level3.hiper.dyconn.api.ValidationException;
 import java.io.Serializable;
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -13,9 +15,9 @@ import org.codehaus.jackson.annotate.JsonProperty;
  *
  * @author zendle.joe
  */
-@JsonIgnoreProperties({"preferredName"})
+@JsonIgnoreProperties({"preferredName","objectCode"})
 
-public class Device implements IValidate ,Serializable {
+public class Device implements Serializable {
    String tid = "";
    String hostname = "";
    String inf = "";
@@ -59,11 +61,11 @@ public class Device implements IValidate ,Serializable {
       return tid;
    }
    
-   @Override
-   public void validate() throws ValidationException {
-      if ( tid == null || "".equals(tid)) throw new ValidationException("device name cannot be empty");
-      if ( inf == null || "".equals(inf)) throw new ValidationException("interface cannot be empty");
+   public String getObjectCode() {
+      if( tid == null || "".equals(tid)) return "";
+      return tid.substring(8, 10);
    }
+   
 
    @Override
    public String toString() {

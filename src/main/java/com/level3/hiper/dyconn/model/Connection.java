@@ -1,8 +1,10 @@
-package com.level3.hiper.dyconn.api;
+package com.level3.hiper.dyconn.model;
 
+import com.level3.hiper.dyconn.api.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -15,12 +17,12 @@ import org.codehaus.jackson.annotate.JsonIgnoreProperties;
  * @author jzendle
  */
 @JsonIgnoreProperties({"created"})
-public class Connection implements IValidate, Serializable, Comparable<Connection> {
+public class Connection implements Serializable, Comparable<Connection> {
 
 	private Integer bandwidth;
 	private Integer cos;
 	private String circuitId = "";
-	private List<Device> devices = new ArrayList<>();
+	private Collection<Device> devices = new ArrayList<>();
 
 	private static Set<Integer> validCos = new HashSet<>(Arrays.asList(1, 3, 5));
 
@@ -49,11 +51,11 @@ public class Connection implements IValidate, Serializable, Comparable<Connectio
 		this.circuitId = circuitId;
 	}
 
-	public List<Device> getDevices() {
+	public Collection<Device> getDevices() {
 		return devices;
 	}
 
-	public void setDevices(List<Device> devices) {
+	public void setDevices(Collection<Device> devices) {
 		this.devices = devices;
 	}
 
@@ -61,22 +63,7 @@ public class Connection implements IValidate, Serializable, Comparable<Connectio
 		this.devices.add(device);
 	}
 
-	@Override
-	public void validate() throws ValidationException {
-		if (circuitId == null || "".equals(circuitId)) {
-			throw new ValidationException("circuitId cannot be empty");
-		}
-		if (!validCos.contains(cos)) {
-			throw new ValidationException("invalid value for cos: " + cos);
-		}
-		if (bandwidth == null || bandwidth < 0) {
-			throw new ValidationException("invalid value for bandwidth: " + bandwidth);
-		}
-		for (Device device : devices) {
-			device.validate();
-		}
-	}
-
+	
 	public Integer getBandwidth() {
 		return bandwidth;
 	}
@@ -95,7 +82,7 @@ public class Connection implements IValidate, Serializable, Comparable<Connectio
 
 	@Override
 	public String toString() {
-		return "Connection{" + " circuitId=" + circuitId + " devices=" + devices + " bandwidth=" + bandwidth + " cos=" + cos + " '}'";
+		return "Connection{" + " circuitId=" + circuitId  + " bandwidth=" + bandwidth + " cos=" + cos + " devices=" + devices + " '}'";
 	}
 
 	@Override

@@ -55,6 +55,8 @@ public class Main {
             log.error("command line", ex);
             return;
          }
+         
+         log.info("configuration file: " + bootstrap);
 
          // read config file
          log.info("loading configuration");

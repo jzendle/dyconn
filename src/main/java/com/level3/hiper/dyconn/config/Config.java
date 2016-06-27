@@ -7,7 +7,10 @@ package com.level3.hiper.dyconn.config;
 
 import io.ous.jtoml.JToml;
 import io.ous.jtoml.Toml;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +35,12 @@ public class Config {
 
    public Config initialize(String fn) throws IOException {
       this.fn = fn;
-      this.toml = JToml.parse(Config.class.getResourceAsStream(fn));
+      InputStream in = Config.class.getResourceAsStream(fn); // check classpass first
+      if ( in == null) { // then absolute path
+         File inFile = new File(fn);
+         in = new FileInputStream(inFile);
+      }
+      this.toml = JToml.parse(in);
       return this;
    }
 

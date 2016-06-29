@@ -1,0 +1,52 @@
+<dycon>
+   <name>VLXX/D00160/LVLC</name>
+   <pe-elynk>
+      <devices>
+         <device>PHLAPAFGRT006</device>
+         <ri-name></ri-name>
+         <ri-description>VLXX/D00160/LVLC - Evolve IP # 336487 [ELYNK-EVPL-B]</ri-description>
+         <site-id>1</site-id>
+         <route-target></route-target>
+         <interfaces>
+            <int>ae12.8011</int>
+            <elynk-metro>
+               <description>VLXX/D00160/LVLC - Evolve IP # 336487 [ELYNK-EVPL-B]</description>
+               <bandwidth>100000000</bandwidth>
+               <s-vlan>0016</s-vlan>
+               <c-vlan>77</c-vlan>
+               <service-bandwidth-policer>LIMIT_100M</service-bandwidth-policer>
+               <class>COS_EDGE_1_VPLS_IN</class>
+            </elynk-metro>
+         </interfaces>
+      </devices>
+   </pe-elynk>
+   <es>
+      <devices>
+         <device>CHSK270ESW001</device>
+         <interfaces>
+            <int>ae1.8026</int>
+            <apply-group>COS-EDGE_1</apply-group>
+         </interfaces>
+      </devices>
+   </es>
+   <pe-elynk>
+      <devices>
+         <device>MNNTMNICRT109</device>
+         <ri-name></ri-name>
+         <ri-description>VLXX/D00160/LVLC - Evolve IP # 336487 [ELYNK-EVPL-B]</ri-description>
+         <site-id>2</site-id>
+         <route-target></route-target>
+         <interfaces>
+            <int>ae000.8028</int>
+            <elynk-es>
+               <description>VLXX/D00160/LVLC - Evolve IP # 336487 [ELYNK-EVPL-B]</description>
+               <bandwidth>100000000</bandwidth>
+               <s-vlan>1004</s-vlan>
+               <c-vlan>88</c-vlan>
+               <service-bandwidth-policer>LIMIT_100M</service-bandwidth-policer>
+               <class>COS_EDGE_1_VPLS_IN</class>
+            </elynk-es>
+         </interfaces>
+      </devices>
+   </pe-elynk>
+</dycon>

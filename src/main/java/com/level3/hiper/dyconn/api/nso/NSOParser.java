@@ -9,13 +9,10 @@ import com.level3.hiper.dyconn.model.Device;
 import com.level3.hiper.dyconn.api.IValidate;
 import com.level3.hiper.dyconn.api.ValidationException;
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.HashSet;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -26,7 +23,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -34,144 +30,152 @@ import org.xml.sax.SAXException;
  */
 public class NSOParser implements IValidate {
 
-	private Document doc = null;
-	private String xml = null;
-	private static final String NID_DEVICES = "/dycon/nid-metro/devices";
-	private static final String PE_DEVICES = "/dycon/pe/devices";
-	private static final String DEVICE = "device";
-	private static final String INTERFACE = "int";
-	private static final String NID_SI = "service-instance";
-	private static final String PE_INTERFACES = "interfaces";
+   private Document doc = null;
+   private String xml = null;
+   private static final String NID_DEVICES = "/dycon/nid-metro/devices";
+   private static final String PE_ELINK_DEVICES = "/dycon/pe-elynk/devices";
+   private static final String PE_DEVICES = "/dycon/pe/devices";
+   private static final String DEVICE = "device";
+   private static final String INTERFACE = "int";
+   private static final String NID_SI = "service-instance";
+   private static final String PE_INTERFACES = "interfaces";
 
-	private static final Logger log = LoggerFactory.getLogger(NSOParser.class);
+   private static final Logger log = LoggerFactory.getLogger(NSOParser.class);
 
-	private Collection<Device> edgeDevices = null;
-	private Collection<Device> peDevices = null;
-	
-	
-	public NSOParser(String xml) {
-		this.xml = xml;
-	}
+   private Collection<Device> edgeDevices = null;
+   private Collection<Device> peDevices = null;
 
-	public Collection<Device> getEdgeDevices() throws IllegalArgumentException {
-		if (edgeDevices != null) return edgeDevices;
-		
-		edgeDevices = new HashSet<>();
+   public NSOParser(String xml) {
+      this.xml = xml;
+   }
 
-		NodeList nodeList = getNodeListForXPath(doc, NID_DEVICES);
+   public Collection<Device> getEdgeDevices() throws IllegalArgumentException {
+      if (edgeDevices != null) {
+         return edgeDevices;
+      }
 
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node node = nodeList.item(i);
+      edgeDevices = new HashSet<>();
 
-			Device device = new Device();
+      NodeList nodeList = getNodeListForXPath(doc, NID_DEVICES);
 
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				Element elem = (Element) node;
-				String tid = getCurrentTag(elem, DEVICE);
-				String inf = getCurrentTag(elem, INTERFACE);
-				String si = getCurrentTag(elem, NID_SI);
-				device.setTid(tid);
-				// TODO will it always be this??
-				device.setInf(inf + ".ServiceInstance." + si);
-			}
-			edgeDevices.add(device);
+      for (int i = 0; i < nodeList.getLength(); i++) {
+         Node node = nodeList.item(i);
 
-		}
+         Device device = new Device();
 
-		return edgeDevices;
-	}
+         if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Element elem = (Element) node;
+            String tid = getCurrentTag(elem, DEVICE);
+            String inf = getCurrentTag(elem, INTERFACE);
+            String si = getCurrentTag(elem, NID_SI);
+            device.setTid(tid);
+            // TODO will it always be this??
+            device.setInf(inf + ".ServiceInstance." + si);
+         }
+         edgeDevices.add(device);
 
-	public Collection<Device> getPeDevices() {
-		
-		if (peDevices != null) return peDevices;
-		
-		peDevices = new HashSet<>();
+      }
 
-		NodeList nodeList = getNodeListForXPath(doc, PE_DEVICES);
+      return edgeDevices;
+   }
 
-		for (int i = 0; i < nodeList.getLength(); i++) {
-			Node node = nodeList.item(i);
+   public Collection<Device> getPeDevices() {
 
-			Device device = new Device();
+      if (peDevices != null) {
+         return peDevices;
+      }
 
-			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				Element elem = (Element) node;
-				String hostname = getCurrentTag(elem, DEVICE);
+      peDevices = new HashSet<>();
 
-				String inf = null;
+      // pe nodes can be under pe or pe-elink nodes
+      NodeList nodeList = getNodeListForXPath(doc, PE_DEVICES);
+      if (nodeList == null || nodeList.getLength() == 0) {
 
-				NodeList interfaces = getCurrentNodeList(elem, PE_INTERFACES);
-				// find first "int" - can there be more than 1?
-				for (int j = 0; j < interfaces.getLength(); j++) {
-					Element infNode = (Element) interfaces.item(j);
-					if (infNode.getNodeType() == Node.ELEMENT_NODE) {
-						inf = getCurrentTag(infNode, INTERFACE);
-						break;
-					}
+         nodeList = getNodeListForXPath(doc, PE_ELINK_DEVICES);
+      }
 
-				}
+      for (int i = 0; i < nodeList.getLength(); i++) {
+         Node node = nodeList.item(i);
 
-				device.setHostname(hostname);
-				device.setInf(inf);
-			}
-			peDevices.add(device);
+         Device device = new Device();
 
-		}
+         if (node.getNodeType() == Node.ELEMENT_NODE) {
+            Element elem = (Element) node;
+            String hostname = getCurrentTag(elem, DEVICE);
 
-		return peDevices;
-	}
+            String inf = null;
 
-	private String getCurrentTag(Element node, String tag) {
-		NodeList nodeList = getCurrentNodeList(node, tag);
-		return nodeList.item(0).getTextContent();
-	}
+            NodeList interfaces = getCurrentNodeList(elem, PE_INTERFACES);
+            // find first "int" - can there be more than 1?
+            for (int j = 0; j < interfaces.getLength(); j++) {
+               Element infNode = (Element) interfaces.item(j);
+               if (infNode.getNodeType() == Node.ELEMENT_NODE) {
+                  inf = getCurrentTag(infNode, INTERFACE);
+                  break;
+               }
 
-	private NodeList getCurrentNodeList(Element node, String tag) {
-		NodeList nodeList = node.getElementsByTagName(tag);
-		if (nodeList == null || nodeList.getLength() == 0) {
-			throw new IllegalArgumentException("tag not found: " + node.getTagName() + '/' + tag);
-		}
-		return nodeList;
+            }
 
-	}
+            device.setHostname(hostname);
+            device.setInf(inf);
+         }
+         peDevices.add(device);
 
-	private NodeList getNodeListForXPath(Document doc, String path) {
-		NodeList nodeList = null;
-		XPath xPath = XPathFactory.newInstance().newXPath();
+      }
 
-		try {
-			nodeList = (NodeList) xPath.compile(path).evaluate(doc, XPathConstants.NODESET);
-		} catch (XPathExpressionException ex) {
-			log.error(NID_DEVICES, ex);
-			throw new IllegalArgumentException(NID_DEVICES, ex);
-		}
-		return nodeList;
-	}
+      return peDevices;
+   }
 
-	@Override
-	public void validate() throws ValidationException {
+   private String getCurrentTag(Element node, String tag) {
+      NodeList nodeList = getCurrentNodeList(node, tag);
+      return nodeList.item(0).getTextContent();
+   }
 
-		// parse
-		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder builder = null;
+   private NodeList getCurrentNodeList(Element node, String tag) {
+      NodeList nodeList = node.getElementsByTagName(tag);
+      if (nodeList == null || nodeList.getLength() == 0) {
+         throw new IllegalArgumentException("tag not found: " + node.getTagName() + '/' + tag);
+      }
+      return nodeList;
 
-		try {
-			builder = factory.newDocumentBuilder();
+   }
 
-			ByteArrayInputStream input = new ByteArrayInputStream(xml.getBytes("UTF-8"));
-			doc = builder.parse(input);
+   private NodeList getNodeListForXPath(Document doc, String path) {
+      NodeList nodeList = null;
+      XPath xPath = XPathFactory.newInstance().newXPath();
 
-		} catch (Exception ex) {
-			log.error(ex.getMessage(), ex);
-			throw new ValidationException("validating NSO xml: " + ex.getMessage());
-		}
-		
-		// business rules
-		
-		if ( getEdgeDevices().size() != 2 &&  getPeDevices().size() != 2    ) {
-			throw new ValidationException("either 2 edge or pe devices must exist in request");
+      try {
+         nodeList = (NodeList) xPath.compile(path).evaluate(doc, XPathConstants.NODESET);
+      } catch (XPathExpressionException ex) {
+         log.error(NID_DEVICES, ex);
+         throw new IllegalArgumentException(NID_DEVICES, ex);
+      }
+      return nodeList;
+   }
 
-		}
-	}
+   @Override
+   public void validate() throws ValidationException {
+
+      // parse
+      DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder builder = null;
+
+      try {
+         builder = factory.newDocumentBuilder();
+
+         ByteArrayInputStream input = new ByteArrayInputStream(xml.getBytes("UTF-8"));
+         doc = builder.parse(input);
+
+      } catch (Exception ex) {
+         log.error(ex.getMessage(), ex);
+         throw new ValidationException("validating NSO xml: " + ex.getMessage());
+      }
+
+      // business rules
+      if (getEdgeDevices().size() != 2 && getPeDevices().size() != 2) {
+         throw new ValidationException("either 2 edge or pe devices must exist in request");
+
+      }
+   }
 
 }

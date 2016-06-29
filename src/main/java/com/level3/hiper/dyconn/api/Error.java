@@ -43,6 +43,11 @@ public final static String FAILURE = "FAILURE";
 		detail = st;
 	}
 
+   @Override
+   public String toString() {
+      return "Error{" + "message=" + message + ", code=" + code + ", detail=" + detail + '}';
+   }
+
 	
 	
 }

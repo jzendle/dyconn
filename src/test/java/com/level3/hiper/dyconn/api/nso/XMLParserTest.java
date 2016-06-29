@@ -42,7 +42,7 @@ public class XMLParserTest {
 	@Before
 	public void setUp() {
 
-		in = this.getClass().getResourceAsStream("/nso_payload_example.xml");
+		// in = this.getClass().getResourceAsStream("/nso_payload_example.xml");
 
 	}
 
@@ -61,11 +61,12 @@ public class XMLParserTest {
 	// The methods must be annotated with annotation @Test. For example:
 	//
 	@Test
-	public void hello() {
+	public void uniToUni() {
+
+      		in = this.getClass().getResourceAsStream("/nso_payload_example.xml");
 
 		String str = new Scanner(in, "UTF-8").useDelimiter("\\A").next();
 
-		System.out.println(str);
 		try {
 			test = new NSOParser(str);
 			test.validate();
@@ -78,6 +79,34 @@ public class XMLParserTest {
 		
 		Collection<Device> devs = test.getEdgeDevices();
 		assertEquals(2, devs.size());
+		System.out.println("edge: " + devs.toString());
+
+		devs = test.getPeDevices();
+		assertEquals(2, devs.size());
+
+		System.out.println("pe: " + devs.toString());
+	}
+   
+   @Test
+	public void cloudToCloud() {
+
+      		in = this.getClass().getResourceAsStream("/nso-elynk-elynk.xml");
+
+		String str = new Scanner(in, "UTF-8").useDelimiter("\\A").next();
+
+		try {
+			test = new NSOParser(str);
+			test.validate();
+		} catch (Exception ex) {
+			System.out.println("here2 " + ex.getMessage());
+			ex.printStackTrace();
+         fail(ex.getMessage());
+
+		}
+		assertNotNull(test);
+		
+		Collection<Device> devs = test.getEdgeDevices();
+		assertEquals(0, devs.size());
 		System.out.println("edge: " + devs.toString());
 
 		devs = test.getPeDevices();

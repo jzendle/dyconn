@@ -5,25 +5,22 @@
  */
 package com.level3.hiper.dyconn.persistence;
 
+import com.level3.hiper.dyconn.config.Config;
 import com.level3.hiper.dyconn.model.Connection;
 import com.level3.hiper.dyconn.model.Device;
-import com.level3.hiper.dyconn.config.Config;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.concurrent.ConcurrentMap;
-import org.mapdb.BTreeKeySerializer;
 import org.mapdb.DB;
-import org.mapdb.Fun;
 import org.mapdb.DBMaker;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.mapdb.Serializer;
+import org.mapdb.serializer.SerializerArrayTuple;
 
 /**
  *
@@ -31,13 +28,12 @@ import org.slf4j.LoggerFactory;
  */
 public class ConnectionStore {
 
-   private static final Logger log = LoggerFactory.getLogger(ConnectionStore.class);
    private static final String BY_CIRCUIT = "byCircuit";
    private static final String BY_DEVICE = "byDevice";
    private static final String REPLAY = "replayMsg";
 
    private ConcurrentMap<String, Connection> byCircuitMap = null;
-   private NavigableSet<Fun.Tuple2<String, Connection>> byDeviceMultiMap = null;
+   private NavigableSet<Object[]> byDeviceMultiMap = null;
 
    static ConnectionStore instance = null;
 
@@ -51,15 +47,15 @@ public class ConnectionStore {
    private DB db;
 
    public void init(String file) {
-      
-      log.info("accessing db file: " + file);
-      db = DBMaker.newFileDB(new File(file)).closeOnJvmShutdown().make();
 
-      byDeviceMultiMap = (db.exists(BY_DEVICE) ? db.getTreeSet(BY_DEVICE)
-              : db.createTreeSet(BY_DEVICE).serializer(BTreeKeySerializer.TUPLE2).make());
+      db = DBMaker.fileDB(file).closeOnJvmShutdown().make();
 
-      byCircuitMap = (db.exists(BY_CIRCUIT) ? db.getHashMap(BY_CIRCUIT)
-              : db.createHashMap(BY_CIRCUIT).make());
+      byCircuitMap = (ConcurrentMap<String, Connection>) db.hashMap(BY_CIRCUIT).createOrOpen();
+
+      byDeviceMultiMap = db.treeSet(BY_DEVICE)
+              //set tuple serializer
+              .serializer(new SerializerArrayTuple(Serializer.STRING, Serializer.JAVA))
+              .createOrOpen();
    }
 
    public Boolean addConnection(Connection conn) {
@@ -73,7 +69,7 @@ public class ConnectionStore {
       }
 
       for (Device device : conn.getDevices()) {
-         byDeviceMultiMap.add(Fun.t2(device.getPreferredName(), conn));
+         byDeviceMultiMap.add(new Object[]{device.getPreferredName(), conn});
       }
       byCircuitMap.put(circuitId, conn);
 
@@ -89,8 +85,22 @@ public class ConnectionStore {
 
    public Collection<Connection> getByDeviceName(String preferredDeviceName) {
       Collection<Connection> ret = new ArrayList<>();
-      for (Connection conn : Fun.filter(byDeviceMultiMap, preferredDeviceName)) {
-         ret.add(conn);
+
+      SortedSet sub;
+      sub = byDeviceMultiMap.subSet(new Object[]{preferredDeviceName}, new Object[]{preferredDeviceName, null});
+
+      Object[] arrayArray = sub.toArray();
+      for (Object arrayObj : arrayArray) {
+         if (arrayObj instanceof Object[]) {
+            Object[] array = (Object[]) arrayObj;
+            for (int i = 0; i < array.length; i++) {
+               Object object = array[i];
+               // array contains alternating keys and values
+               if (object instanceof Connection) {
+                  ret.add((Connection) object);
+               }
+            }
+         }
       }
       return ret;
    }
@@ -107,10 +117,10 @@ public class ConnectionStore {
       for (Device dev : conn.getDevices()) {
          // find all matching devices by name 
          String deviceName = dev.getPreferredName();
-         for (Connection candidate : Fun.filter(byDeviceMultiMap, deviceName)) {
+         for (Connection candidate : getByDeviceName(deviceName)) {
             // remove them if circuitId matches
             if (candidate.getCircuitId().equals(circuitId)) {
-               byDeviceMultiMap.remove(Fun.t2(deviceName, candidate));
+               byDeviceMultiMap.remove(new Object[]{deviceName, candidate});
             }
          }
       }
@@ -141,10 +151,10 @@ public class ConnectionStore {
          if (deleted != null) {
             cnt++;
             for (Device device : connection.getDevices()) {
-               if (byDeviceMultiMap.remove(Fun.t2(device.getPreferredName(), deleted))) {
+               if (byDeviceMultiMap.remove(new Object[]{device.getPreferredName(), deleted})) {
                   cnt++;
                } else {
-                  log.warn("record not found in byDeviceMultiMap for device: {} connection: {}", device, deleted);
+                  System.err.format("record not found in byDeviceMultiMap for device: {} connection: {}", device, deleted);
                }
             }
          }
@@ -179,12 +189,17 @@ public class ConnectionStore {
       System.out.println("byDeviceMultimapMap dump: ");
       Iterator iter = byDeviceMultiMap.iterator();
       while (iter.hasNext()) {
-         Fun.Tuple2<String, Connection> tup = (Fun.Tuple2<String, Connection>) iter.next();
-         System.out.println("key:" + tup.a + " value: " + tup.b);
+         for (Object object : (Object[]) iter.next()) {
+            if (object instanceof String) {
+               System.out.print("key: " + object);
+            } else {
+               System.out.println(" value: " + object);
+            }
+         }
       }
-
    }
 
+   
    public void initialize() {
       String key = "db." + Config.instance().env() + ".file";
       String value = Config.instance().getString(key);
@@ -193,5 +208,5 @@ public class ConnectionStore {
       }
       this.init(value);
    }
-
+   
 }
